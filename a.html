@@ -34,23 +34,32 @@
 <body>
   <div class="toolbar">
     <button onclick="setTool('pencil')">Pencil</button>
+    <label for="pencilSizeSlider">Pencil Size:</label>
+    <input type="range" id="pencilSizeSlider" min="1" max="50" value="5">
+
     <button onclick="setTool('eraser')">Eraser</button>
-    <label for="sizeSlider">Size:</label>
-    <input type="range" id="sizeSlider" min="1" max="50" value="5">
+    <label for="eraserSizeSlider">Eraser Size:</label>
+    <input type="range" id="eraserSizeSlider" min="1" max="50" value="5">
   </div>
   <canvas id="canvas" width="800" height="600"></canvas>
 
   <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    const sizeSlider = document.getElementById('sizeSlider');
+    const pencilSizeSlider = document.getElementById('pencilSizeSlider');
+    const eraserSizeSlider = document.getElementById('eraserSizeSlider');
 
     let drawing = false;
     let tool = 'pencil';
-    let size = parseInt(sizeSlider.value);
+    let pencilSize = parseInt(pencilSizeSlider.value);
+    let eraserSize = parseInt(eraserSizeSlider.value);
 
-    sizeSlider.addEventListener('input', () => {
-      size = parseInt(sizeSlider.value);
+    pencilSizeSlider.addEventListener('input', () => {
+      pencilSize = parseInt(pencilSizeSlider.value);
+    });
+
+    eraserSizeSlider.addEventListener('input', () => {
+      eraserSize = parseInt(eraserSizeSlider.value);
     });
 
     canvas.addEventListener('mousedown', () => {
@@ -80,7 +89,7 @@
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      ctx.lineWidth = size;
+      ctx.lineWidth = tool === 'pencil' ? pencilSize : eraserSize;
       ctx.lineCap = 'round';
       ctx.strokeStyle = tool === 'pencil' ? 'black' : 'white';
 
