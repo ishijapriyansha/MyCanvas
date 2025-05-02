@@ -18,10 +18,15 @@
     }
     .toolbar {
       margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    button {
-      margin-right: 10px;
+    button, input[type=range] {
       padding: 8px 16px;
+      font-size: 16px;
+    }
+    label {
       font-size: 16px;
     }
   </style>
@@ -30,8 +35,60 @@
   <div class="toolbar">
     <button onclick="setTool('pencil')">Pencil</button>
     <button onclick="setTool('eraser')">Eraser</button>
+    <label for="sizeSlider">Size:</label>
+    <input type="range" id="sizeSlider" min="1" max="50" value="5">
   </div>
   <canvas id="canvas" width="800" height="600"></canvas>
 
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const sizeSlider = document.getElementById('sizeSlider');
+
+    let drawing = false;
+    let tool = 'pencil';
+    let size = parseInt(sizeSlider.value);
+
+    sizeSlider.addEventListener('input', () => {
+      size = parseInt(sizeSlider.value);
+    });
+
+    canvas.addEventListener('mousedown', () => {
+      drawing = true;
+      ctx.beginPath();
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      drawing = false;
+      ctx.beginPath();
+    });
+
+    canvas.addEventListener('mouseout', () => {
+      drawing = false;
+      ctx.beginPath();
+    });
+
+    canvas.addEventListener('mousemove', draw);
+
+    function setTool(selectedTool) {
+      tool = selectedTool;
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      ctx.lineWidth = size;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = tool === 'pencil' ? 'black' : 'white';
+
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
+  </script>
 </body>
 </html>
