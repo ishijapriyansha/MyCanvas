@@ -21,8 +21,9 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
-    button, input[type=range] {
+    button, input[type=range], select {
       padding: 8px 16px;
       font-size: 16px;
     }
@@ -40,6 +41,12 @@
     <button onclick="setTool('eraser')">Eraser</button>
     <label for="eraserSizeSlider">Eraser Size:</label>
     <input type="range" id="eraserSizeSlider" min="1" max="50" value="5">
+
+    <label for="eraserType">Eraser Type:</label>
+    <select id="eraserType">
+      <option value="normal">Normal Eraser</option>
+      <option value="object">Object Eraser</option>
+    </select>
   </div>
   <canvas id="canvas" width="800" height="600"></canvas>
 
@@ -48,6 +55,7 @@
     const ctx = canvas.getContext('2d');
     const pencilSizeSlider = document.getElementById('pencilSizeSlider');
     const eraserSizeSlider = document.getElementById('eraserSizeSlider');
+    const eraserTypeSelect = document.getElementById('eraserType');
 
     let tool = 'pencil';
     let pencilSize = parseInt(pencilSizeSlider.value);
@@ -79,7 +87,7 @@
           points: [{ x, y }]
         };
       } else if (tool === 'eraser') {
-        eraseStroke(x, y);
+        handleErasing(x, y);
       }
     });
 
@@ -90,7 +98,7 @@
         currentStroke.points.push({ x, y });
         redrawCanvas();
       } else if (tool === 'eraser') {
-        eraseStroke(x, y);
+        handleErasing(x, y);
       }
     });
 
@@ -139,7 +147,20 @@
       ctx.stroke();
     }
 
-    function eraseStroke(x, y) {
+    function handleErasing(x, y) {
+      const type = eraserTypeSelect.value;
+      if (type === 'object') {
+        objectErase(x, y);
+      } else {
+        normalErase(x, y);
+      }
+    }
+
+    function normalErase(x, y) {
+      ctx.clearRect(x - eraserSize / 2, y - eraserSize / 2, eraserSize, eraserSize);
+    }
+
+    function objectErase(x, y) {
       for (let i = strokes.length - 1; i >= 0; i--) {
         const stroke = strokes[i];
         for (const point of stroke.points) {
