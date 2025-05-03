@@ -30,24 +30,40 @@
     label {
       font-size: 16px;
     }
+    .active {
+      background-color: lightblue;
+    }
+    .tool-options {
+      display: none;
+    }
+    .tool-options.active {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="toolbar">
-    <button onclick="setTool('pencil')">Pencil</button>
-    <label for="pencilSizeSlider">Pencil Size:</label>
-    <input type="range" id="pencilSizeSlider" min="1" max="50" value="5">
+    <button id="pencilBtn" onclick="setTool('pencil')">Pencil</button>
+    <div id="pencilOptions" class="tool-options">
+      <label for="pencilSizeSlider">Pencil Size:</label>
+      <input type="range" id="pencilSizeSlider" min="1" max="50" value="5">
+    </div>
 
-    <button onclick="setTool('eraser')">Eraser</button>
-    <label for="eraserSizeSlider">Eraser Size:</label>
-    <input type="range" id="eraserSizeSlider" min="1" max="50" value="5">
+    <button id="eraserBtn" onclick="setTool('eraser')">Eraser</button>
+    <div id="eraserOptions" class="tool-options">
+      <label for="eraserSizeSlider">Eraser Size:</label>
+      <input type="range" id="eraserSizeSlider" min="1" max="50" value="5">
 
-    <label for="eraserType">Eraser Type:</label>
-    <select id="eraserType">
-      <option value="normal">Normal Eraser</option>
-      <option value="object">Object Eraser</option>
-    </select>
+      <label for="eraserType">Eraser Type:</label>
+      <select id="eraserType">
+        <option value="normal">Normal Eraser</option>
+        <option value="object">Object Eraser</option>
+      </select>
+    </div>
   </div>
+
   <canvas id="canvas" width="800" height="600"></canvas>
 
   <script>
@@ -56,6 +72,11 @@
     const pencilSizeSlider = document.getElementById('pencilSizeSlider');
     const eraserSizeSlider = document.getElementById('eraserSizeSlider');
     const eraserTypeSelect = document.getElementById('eraserType');
+
+    const pencilBtn = document.getElementById('pencilBtn');
+    const eraserBtn = document.getElementById('eraserBtn');
+    const pencilOptions = document.getElementById('pencilOptions');
+    const eraserOptions = document.getElementById('eraserOptions');
 
     let tool = 'pencil';
     let pencilSize = parseInt(pencilSizeSlider.value);
@@ -74,7 +95,21 @@
 
     function setTool(selectedTool) {
       tool = selectedTool;
+      pencilBtn.classList.remove('active');
+      eraserBtn.classList.remove('active');
+      pencilOptions.classList.remove('active');
+      eraserOptions.classList.remove('active');
+
+      if (tool === 'pencil') {
+        pencilBtn.classList.add('active');
+        pencilOptions.classList.add('active');
+      } else if (tool === 'eraser') {
+        eraserBtn.classList.add('active');
+        eraserOptions.classList.add('active');
+      }
     }
+
+    setTool('pencil');
 
     canvas.addEventListener('mousedown', (e) => {
       drawing = true;
